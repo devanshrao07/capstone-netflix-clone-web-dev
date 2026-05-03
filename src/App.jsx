@@ -8,9 +8,10 @@ import Rows from './components/Rows';
 import Modal from './components/Modal';
 import Footer from './components/Footer';
 import SearchOverlay from './components/SearchOverlay';
+import VideoPlayer from './components/VideoPlayer';
 
 export default function App() {
-  const { activeProfile } = useContext(AppContext);
+  const { activeProfile, playingMovie, setPlayingMovie } = useContext(AppContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -55,6 +56,10 @@ export default function App() {
 
       {selectedItem && (
         <Modal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      )}
+
+      {playingMovie && (
+        <VideoPlayer item={playingMovie} onClose={() => setPlayingMovie(null)} />
       )}
     </>
   );

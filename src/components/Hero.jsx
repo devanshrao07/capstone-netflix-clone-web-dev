@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { trending, img } from '../api';
+import { AppContext } from '../context/AppContext';
 
 export default function Hero({ onInfo }) {
+  const { playMovie } = useContext(AppContext);
   const [items, setItems] = useState([]);
   const [idx, setIdx] = useState(0);
   const [fade, setFade] = useState(true);
@@ -47,7 +49,7 @@ export default function Hero({ onInfo }) {
         <h1 className="hero-title">{title}</h1>
         <p className="hero-overview">{overview}</p>
         <div className="hero-btns">
-          <button className="btn-play">
+          <button className="btn-play" onClick={() => playMovie({ ...item, media_type: type })}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
             Play
           </button>

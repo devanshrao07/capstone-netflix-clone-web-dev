@@ -16,6 +16,8 @@ export const AppProvider = ({ children }) => {
   const [activeProfile, setActiveProfile] = useState(() => loadState('netflix_profile', null));
   const [myList, setMyList] = useState(() => loadState('netflix_mylist', {}));
   const [continueWatching, setContinueWatching] = useState(() => loadState('netflix_continue', {}));
+  const [likedMovies, setLikedMovies] = useState(() => loadState('netflix_liked', {}));
+  const [playingMovie, setPlayingMovie] = useState(null);
 
   // Sync to LocalStorage whenever state changes
   useEffect(() => {
@@ -29,6 +31,10 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('netflix_continue', JSON.stringify(continueWatching));
   }, [continueWatching]);
+
+  useEffect(() => {
+    localStorage.setItem('netflix_liked', JSON.stringify(likedMovies));
+  }, [likedMovies]);
 
   // Actions
   const toggleMyList = (movie) => {
@@ -53,13 +59,30 @@ export const AppProvider = ({ children }) => {
       const filtered = profileHistory.filter(m => m.id !== movie.id);
       return { ...prev, [activeProfile.name]: [movie, ...filtered] };
     });
+    setPlayingMovie(movie);
+  };
+
+  const toggleLike = (movie) => {
+    if (!activeProfile) return;
+    setLikedMovies(prev => {
+      const profileList = prev[activeProfile.name] || [];
+      const exists = profileList.find(m => m.id === movie.id);
+      
+      const updatedProfileList = exists 
+        ? profileList.filter(m => m.id !== movie.id)
+        : [movie, ...profileList];
+        
+      return { ...prev, [activeProfile.name]: updatedProfileList };
+    });
   };
 
   return (
     <AppContext.Provider value={{
       activeProfile, setActiveProfile,
       myList, toggleMyList,
-      continueWatching, playMovie
+      continueWatching, playMovie,
+      playingMovie, setPlayingMovie,
+      likedMovies, toggleLike
     }}>
       {children}
     </AppContext.Provider>
